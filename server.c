@@ -3,16 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   server.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: andi <andi@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: anvacca <anvacca@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/16 17:39:20 by andi              #+#    #+#             */
-/*   Updated: 2024/07/16 22:14:17 by andi             ###   ########.fr       */
+/*   Updated: 2024/09/18 12:13:17 by anvacca          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int	ft_recursive_power(int nb, int power)
+static int	ft_strlen(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+		i++;
+	return (i);
+}
+
+static int	ft_recursive_power(int nb, int power)
 {
 	int	res;
 
@@ -27,7 +37,7 @@ int	ft_recursive_power(int nb, int power)
 	}
 }
 
-char	*letter_to_string(char *string, char const letter)
+static char	*addletter(char *string, char const letter)
 {
 	int		i;
 	int		j;
@@ -43,14 +53,14 @@ char	*letter_to_string(char *string, char const letter)
 	i = 0;
 	tab[j++] = letter;
 	tab[j] = 0;
-	free (string);
+	free(string);
 	return (tab);
 }
 
-void	signal_handler(int signum)
+static void	signal_handler(int signum)
 {
 	static int	result = 0;
-	static int count = 0;
+	static int	count = 0;
 	static char	*string;
 
 	if (!string)
@@ -61,27 +71,27 @@ void	signal_handler(int signum)
 	if (signum == SIGUSR1)
 		result = result + 0;
 	else if (signum == SIGUSR2)
-		result = result + (1 * ft_recursive_power(2, 7 - counter));
+		result = result + (1 * ft_recursive_power(2, 7 - count));
 	count++;
 	if (count == 8)
 	{
 		string = addletter(string, result);
 		if (result == '\0')
 		{
-			ft_printf("%s", string)
+			ft_putstr(string);
 			string = NULL;
 		}
 		count = 0;
-		result = 0
+		result = 0;
 	}
-
 }
 
-int main(void)
+int	main(void)
 {
-	ft_printf("Server's PID: %d\n", getpid());
-	signal(SIGUSR1, signal_read);
-	signal(SIGUSR2, signal_read);
+	ft_putstr("server's PID : ");
+	ft_putnbr(getpid());
+	signal(SIGUSR1, signal_handler);
+	signal(SIGUSR2, signal_handler);
 	while (1)
-		usleep(100);
+		usleep(2000);
 }
